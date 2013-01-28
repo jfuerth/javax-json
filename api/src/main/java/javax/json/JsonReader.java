@@ -40,8 +40,6 @@
 
 package javax.json;
 
-import javax.json.stream.JsonParser;
-import javax.json.stream.JsonParserFactory;
 import java.io.Closeable;
 import java.io.InputStream;
 import java.io.Reader;
@@ -49,6 +47,9 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Map;
+
+import javax.json.stream.JsonParser;
+import javax.json.stream.JsonParserFactory;
 
 /**
  * A JSON reader that reads a JSON {@link JsonObject object} or
@@ -286,8 +287,7 @@ public class JsonReader implements /*Auto*/Closeable {
                     builder.add(string);
                     break;
                 case VALUE_NUMBER:
-                    BigDecimal bd = new BigDecimal(parser.getString());
-                    builder.add(bd);
+                    builder.addNumber(parser.getString());
                     break;
                 case VALUE_TRUE:
                     builder.add(true);

@@ -43,7 +43,11 @@ package javax.json;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Builds a {@link JsonObject} from scratch. It uses builder pattern to build
@@ -170,6 +174,23 @@ public class JsonObjectBuilder {
      * @see JsonNumber
      */
     public JsonObjectBuilder add(String name, BigDecimal value) {
+        valueMap.put(name, new JsonNumberImpl(value));
+        return this;
+    }
+
+    /**
+     * Associates the specified numeric value with the specified name in the
+     * JSON object that is being built. If the JSON object that is being
+     * built previously contained a mapping for the name, the old value
+     * is replaced by the specified value.
+     *
+     * @param name name with which the specified value is to be associated
+     * @param value value to be associated with the specified name
+     * @return this object builder
+     *
+     * @see JsonNumber
+     */
+    public JsonObjectBuilder addNumber(String name, String value) {
         valueMap.put(name, new JsonNumberImpl(value));
         return this;
     }

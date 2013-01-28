@@ -43,7 +43,10 @@ package javax.json;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Builds a {@link JsonArray} from scratch. It uses builder pattern
@@ -112,6 +115,24 @@ public class JsonArrayBuilder {
      */
     public JsonArrayBuilder add(String value) {
         valueList.add(new JsonStringImpl(value));
+        return this;
+    }
+
+    /**
+     * Adds the specified numeric value to the array that is being built.
+     *
+     * @param value
+     *            value to be appended to the array. Must be a valid JSON
+     *            numeric value. Must not be null.
+     * @return this array builder
+     * @throws NumberFormatException
+     *             if the value is not a valid JSON number.
+     * @throws NullPointerException
+     *             if the value is null.
+     * @see JsonNumber
+     */
+    public JsonArrayBuilder addNumber(String value) {
+        valueList.add(new JsonNumberImpl(value));
         return this;
     }
 
@@ -331,28 +352,56 @@ final class JsonStringImpl implements JsonString {
 }
 
 final class JsonNumberImpl implements JsonNumber {
+    /**
+     * The original value given for this JsonNumber. Checked for validity when
+     * object is created; returned verbatim by toString().
+     */
+    private final String originalValue;
+
+    /**
+     * The BigDecimal value of this JsonNumber.
+     */
     private final BigDecimal bigDecimal;
 
     public JsonNumberImpl(int value) {
         bigDecimal = new BigDecimal(value);
+        originalValue = bigDecimal.toString();
     }
 
     public JsonNumberImpl(long value) {
         bigDecimal = new BigDecimal(value);
+        originalValue = bigDecimal.toString();
     }
 
     public JsonNumberImpl(BigInteger value) {
         bigDecimal = new BigDecimal(value);
+        originalValue = bigDecimal.toString();
     }
 
     public JsonNumberImpl(double value) {
         //bigDecimal = new BigDecimal(value);
         // This is the preferred way to convert double to BigDecimal
         bigDecimal = BigDecimal.valueOf(value);
+        originalValue = bigDecimal.toString();
     }
 
     public JsonNumberImpl(BigDecimal value) {
         this.bigDecimal = value;
+        originalValue = bigDecimal.toString();
+    }
+
+    /**
+     * Creates a JsonNumber instance from the given value, which will be
+     * preserved exactly and returned by toString().
+     *
+     * @param value
+     *            A valid JSON numeric value. Must not be null.
+     * @throws NumberFormatException
+     *             if the value is not a valid JSON number.
+     */
+    public JsonNumberImpl(String value) {
+	originalValue = value;
+        this.bigDecimal = new BigDecimal(value);
     }
 
     @Override
@@ -407,7 +456,11 @@ final class JsonNumberImpl implements JsonNumber {
 
     @Override
     public int hashCode() {
-        return getBigDecimalValue().hashCode();
+        String normalized = getBigDecimalValue().stripTrailingZeros().toString();
+        if (normalized.equals("0.0")) {
+            normalized = "0";
+        }
+        return normalized.hashCode();
     }
 
     @Override
@@ -415,13 +468,13 @@ final class JsonNumberImpl implements JsonNumber {
         if (!(obj instanceof JsonNumber)) {
             return false;
         }
-        JsonNumber other = (JsonNumber)obj;
-        return getBigDecimalValue().equals(other.getBigDecimalValue());
+        JsonNumber other = (JsonNumber) obj;
+        return getBigDecimalValue().compareTo(other.getBigDecimalValue()) == 0;
     }
 
     @Override
     public String toString() {
-        return bigDecimal.toString();
+        return originalValue;
     }
 
 }

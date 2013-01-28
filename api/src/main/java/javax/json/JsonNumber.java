@@ -44,20 +44,20 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
- * {@code JsonNumber} represents an immutable JSON number value
- *
+ * An immutable, arbitrary precision numeric value with a JSON representation.
  * <p>
- * A {@link BigDecimal} may be used to store the numeric value internally.
- * The BigDecimal
- * may be constructed using {@link BigDecimal#BigDecimal(int) <code>int</code>},
- * {@link BigDecimal#BigDecimal(long) <code>long</code>},
- * {@link BigDecimal#BigDecimal(BigInteger) <code>BigInteger</code>},
- * {@link BigDecimal#valueOf(double) <code>double</code>} and
- * {@link BigDecimal#BigDecimal(String) <code>String</code>}.
- * Some of the method semantics in this class are defined using the
- * {@code BigDecimal} semantics.
+ * Instances of JsonNumber constructed from a string or BigDecimal preserve the
+ * exact value they were constructed with, including use of exponential notation
+ * and including any trailing zeroes. Note that leading zeroes are not permitted
+ * by the JSON grammar.
+ * <p>
+ * Any two JsonNumber values that have exactly the same magnitude are considered
+ * equal, even if their string representations differ. This means JsonNumber
+ * instances constructed from the strings "100", "100.0", and "1e2" are all
+ * equal.
  *
  * @author Jitendra Kotamraju
+ * @author Jonathan Fuerth
  */
 public interface JsonNumber extends JsonValue {
 
@@ -112,10 +112,9 @@ public interface JsonNumber extends JsonValue {
     /**
      * Returns JSON number as an {@code int} number. Note that this conversion
      * can lose information about the overall magnitude and precision of the
-     * number value as well as return a result with the opposite sign.
+     * number value as well as return a result with the incorrect sign.
      *
      * @return an {@code int} for JSON number.
-     * @see java.math.BigDecimal#intValue()
      */
     int getIntValue();
 
@@ -125,17 +124,15 @@ public interface JsonNumber extends JsonValue {
      * @return an {@code int} for JSON number
      * @throws ArithmeticException cause if the number has a nonzero fractional
      *         part, or will not fit in an {@code int}
-     * @see java.math.BigDecimal#intValueExact()
      */
     int getIntValueExact();
 
     /**
      * Returns JSON number as a {@code long} number. Note that this conversion
      * can lose information about the overall magnitude and precision of the
-     * number value as well as return a result with the opposite sign.
+     * number value as well as return a result with the incorrect sign.
      *
      * @return a {@code long} for JSON number.
-     * @see java.math.BigDecimal#longValue()
      */
     long getLongValue();
 
@@ -145,16 +142,13 @@ public interface JsonNumber extends JsonValue {
      * @return a {@code long} for JSON number
      * @throws ArithmeticException if the number has a nonzero fractional
      *         part, or will not fit in a {@code long}.
-     * @see java.math.BigDecimal#longValueExact()
      */
     long  getLongValueExact();
 
     /**
      * Returns JSON number as a {@link BigInteger} number. It is more of
      * a convenience method for {@code getBigDecimalValue().toBigInteger()}.
-     * Note that this conversion can lose information about the overall
-     * magnitude and precision of the number value as well as return a result
-     * with the opposite sign.
+     * Note that this conversion discards the fractional part of the number, if any.
      *
      * @return a BigInteger for JSON number.
      * @see java.math.BigDecimal#toBigInteger()
@@ -172,49 +166,62 @@ public interface JsonNumber extends JsonValue {
     BigInteger getBigIntegerValueExact();
 
     /**
-     * Returns JSON number as a {@code double} number. It is more of
-     * a convenience method for {@code getBigDecimalValue().doubleValue()}.
+     * Returns the {@code double} value nearest to this JSON number.
      * Note that this conversion can lose information about the overall
-     * magnitude and precision of the number value as well as return a result
-     * with the opposite sign.
+     * magnitude and precision of the number, and may return
+     * {@code Double.NEGATIVE_INFINITY} or {@code Double.POSITIVE_INFINITY}
+     * for numbers beyond the range covered by {@code double}.
      *
      * @return a {@code double} for JSON number
-     * @see java.math.BigDecimal#doubleValue()
      */
     double getDoubleValue();
 
     /**
-     * Returns JSON number as a {@link BigDecimal}
+     * Returns this JSON number's value as a {@link BigDecimal}. Any trailing
+     * zeroes this JSON number was constructed with will be properly reflected
+     * in the precision claimed by the BigDecimal instance returned.
      *
-     * @return a {@link BigDecimal} for JSON number
+     * @see BigDecimal#precision()
+     * @return a {@link BigDecimal} exactly representing this JSON number.
      */
     BigDecimal getBigDecimalValue();
 
     /**
-     * Returns a JSON representation of the JSON number value. The
-     * representation would be equivalent to {@link BigDecimal#toString()}.
+     * Returns a JSON representation of this number value. The representation is
+     * guaranteed to match the representation this JsonNumber was created with,
+     * including exponential notation and trailing zeroes that do not contribute
+     * to the magnitude of the number.
      *
-     * @return JSON representation of the number
+     * @return a valid JSON representation of this exact number.
      */
     @Override
     String toString();
 
     /**
-     * Compares the specified object with this JsonNumber for equality.
-     * Returns {@code true} if and only if the specified object is also a
-     * JsonNumber, and their {@link #getBigDecimalValue()} objects are
-     * <i>equal</i>
+     * Compares the specified object with this JsonNumber for equality. Returns
+     * {@code true} if and only if the specified object is also a JsonNumber,
+     * and they represent the same numeric quantity (regardless of exponential
+     * notation and trailing zeroes in the fractional part).
      *
-     * @param obj the object to be compared for equality with this JsonNumber
-     * @return {@code true} if the specified object is equal to this JsonNumber
+     * @param obj
+     *            the object to be compared for equality with this JsonNumber
+     * @return {@code true} if the specified object is a JsonNumber with equal
+     *         magnitude
      */
     @Override
     boolean equals(Object obj);
 
     /**
-     * Returns the hash code value for this JsonNumber object.  The hash code of
-     * a JsonNumber object is defined to be its {@link #getBigDecimalValue()}
-     * object's hash code.
+     * Returns the hash code value for this JsonNumber object. The hash code of
+     * a JsonNumber object is defined to be the hash code of its normalized
+     * String representation.
+     * <p>
+     * For any {@code JsonNumber num}, the normalized String representation can
+     * be computed by {@code new
+     * BigDecimal(num.toString()).stripTrailingZeroes().toString()}, then
+     * applying one fixup: if the result is {@code "0.0"}, the normalized value
+     * {@code "0"} should be used instead. Any other technique may be used as
+     * long as it yields the same results in all cases.
      *
      * @return the hash code value for this JsonNumber object
      */

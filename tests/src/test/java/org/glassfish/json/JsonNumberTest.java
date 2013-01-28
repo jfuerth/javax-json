@@ -40,13 +40,19 @@
 
 package org.glassfish.json;
 
-import junit.framework.TestCase;
-
-import javax.json.*;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonNumber;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
+import javax.json.JsonWriter;
+
+import junit.framework.TestCase;
 
 /**
  * @author Jitendra Kotamraju
@@ -209,7 +215,7 @@ public class JsonNumberTest extends TestCase {
 
     public void testLeadingZeroes() {
         JsonArray array = new JsonArrayBuilder()
-                .add(0012.1d)
+                .add(0012.1d) // FIXME these zeroes are removed by the Java compiler
                 .build();
 
         StringWriter sw = new StringWriter();
@@ -230,5 +236,188 @@ public class JsonNumberTest extends TestCase {
         }
     }
 
+    public void testPreserveTrailingZeroes() {
+        JsonReader reader = new JsonReader(new StringReader("[10.400]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        BigDecimal bigDecimalValue = num.getBigDecimalValue();
+        assertEquals(new BigDecimal("10.400"), bigDecimalValue);
+        assertEquals("10.400", num.toString());
+    }
+
+    public void testPreserveNegativeZero() {
+        JsonReader reader = new JsonReader(new StringReader("[-0.0]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+System.out.println(new BigDecimal("-0.0"));
+        assertEquals("-0.0", num.toString());
+    }
+
+    public void testHashCodePositiveInteger() {
+        JsonReader reader = new JsonReader(new StringReader("[1234]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        assertEquals("1234".hashCode(), num.hashCode());
+    }
+
+    public void testHashCodeNegativeInteger() {
+        JsonReader reader = new JsonReader(new StringReader("[-1234]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        assertEquals("-1234".hashCode(), num.hashCode());
+    }
+
+    public void testHashCodeIntegerWithTrailingZeroes() {
+        JsonReader reader = new JsonReader(new StringReader("[1234000]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        assertEquals("1.234E+6".hashCode(), num.hashCode());
+    }
+
+    // test disabled until leading zeroes case is fixed in parser
+//    public void testHashCodeIntegerWithLeadingZeroes() {
+//        JsonReader reader = new JsonReader(new StringReader("[00001234]"));
+//        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+//        reader.close();
+//
+//        assertEquals("1234".hashCode(), num.hashCode());
+//    }
+
+    public void testHashCodeDecimalWithTrailingZeroes() {
+        JsonReader reader = new JsonReader(new StringReader("[12.34000]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        assertEquals("12.34".hashCode(), num.hashCode());
+    }
+
+    public void testHashCodeDecimalLessThanOneWithTrailingZeroes() {
+        JsonReader reader = new JsonReader(new StringReader("[0.1234000]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        assertEquals("0.1234".hashCode(), num.hashCode());
+    }
+
+    public void testHashCodeDecimalLessThanOneWithLeadingZeroes() {
+        JsonReader reader = new JsonReader(new StringReader("[0.00000001234]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        assertEquals("1.234E-8".hashCode(), num.hashCode());
+    }
+
+    public void testHashCodeZero() {
+        JsonReader reader = new JsonReader(new StringReader("[0]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        assertEquals("0".hashCode(), num.hashCode());
+    }
+
+    public void testHashCodeZeroPointZero() {
+        JsonReader reader = new JsonReader(new StringReader("[0.0]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        assertEquals("0".hashCode(), num.hashCode());
+    }
+
+    public void testHashCodeNegativeZeroPointZero() {
+        JsonReader reader = new JsonReader(new StringReader("[-0.0]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        assertEquals("0".hashCode(), num.hashCode());
+    }
+
+    public void testHashCodeTen() {
+        JsonReader reader = new JsonReader(new StringReader("[10]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        assertEquals("1E+1".hashCode(), num.hashCode());
+    }
+
+    public void testHashCodeTenPointZero() {
+        JsonReader reader = new JsonReader(new StringReader("[10.0]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        assertEquals("1E+1".hashCode(), num.hashCode());
+    }
+
+    /**
+     * BigDecimal.toString() never uses scientific notation for
+     * trailing-zero-stripped values bigger than 1E-6.
+     */
+    public void testHashCodeLargeNumber() {
+        JsonReader reader = new JsonReader(new StringReader("[999999999]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        assertEquals("999999999".hashCode(), num.hashCode());
+    }
+
+    /**
+     * BigDecimal.toString() always uses scientific notation for numbers whose
+     * absolute value is less than 1E-6.
+     */
+    public void testHashCodeNumberBelowScientificNotationThreshold() {
+        JsonReader reader = new JsonReader(new StringReader("[0.000000999999999]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        assertEquals("9.99999999E-7".hashCode(), num.hashCode());
+    }
+
+    /**
+     * BigDecimal.toString() never uses scientific notation for numbers whose
+     * absolute value is between 1E-6 and 1.0.
+     */
+    public void testHashCodeNumberAboveScientificNotationThreshold() {
+        JsonReader reader = new JsonReader(new StringReader("[0.00000999999999]"));
+        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
+        reader.close();
+
+        assertEquals("0.00000999999999".hashCode(), num.hashCode());
+    }
+
+    public void testZeroEqualsZeroPointZero() {
+        JsonReader reader = new JsonReader(new StringReader("[0, 0.0]"));
+        JsonArray array = reader.readArray();
+        reader.close();
+        JsonNumber num0 = array.getValue(0, JsonNumber.class);
+        JsonNumber num1 = array.getValue(1, JsonNumber.class);
+
+        assertEquals(num0, num1);
+        assertEquals(num1, num0);
+    }
+
+    public void testTenEqualsTenPointZero() {
+        JsonReader reader = new JsonReader(new StringReader("[10, 10.0]"));
+        JsonArray array = reader.readArray();
+        reader.close();
+        JsonNumber num0 = array.getValue(0, JsonNumber.class);
+        JsonNumber num1 = array.getValue(1, JsonNumber.class);
+
+        assertEquals(num0, num1);
+        assertEquals(num1, num0);
+    }
+
+    public void testEqualsDisregardsTrailingZeroes() {
+        JsonReader reader = new JsonReader(new StringReader("[123.45600, 123.456]"));
+        JsonArray array = reader.readArray();
+        reader.close();
+        JsonNumber num0 = array.getValue(0, JsonNumber.class);
+        JsonNumber num1 = array.getValue(1, JsonNumber.class);
+
+        assertEquals(num0, num1);
+        assertEquals(num1, num0);
+    }
 
 }
