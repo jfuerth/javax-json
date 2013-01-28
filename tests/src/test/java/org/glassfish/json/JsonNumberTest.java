@@ -51,6 +51,7 @@ import javax.json.JsonNumber;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.json.JsonWriter;
+import javax.json.stream.JsonParsingException;
 
 import junit.framework.TestCase;
 
@@ -214,16 +215,15 @@ public class JsonNumberTest extends TestCase {
     }
 
     public void testLeadingZeroes() {
-        JsonArray array = new JsonArrayBuilder()
-                .add(0012.1d) // FIXME these zeroes are removed by the Java compiler
-                .build();
-
-        StringWriter sw = new StringWriter();
-        JsonWriter jw = new JsonWriter(sw);
-        jw.write(array);
-        jw.close();
-
-        assertEquals("[12.1]", sw.toString());
+        JsonReader reader = new JsonReader(new StringReader("[0012.1]"));
+        try {
+            reader.readArray();
+            fail("Leading zeroes should not be allowed into JsonNumber");
+        } catch (JsonParsingException expected) {
+            // test passes
+        } finally {
+            reader.close();
+        }
     }
 
     public void testBigIntegerExact() {
@@ -277,15 +277,6 @@ System.out.println(new BigDecimal("-0.0"));
 
         assertEquals("1.234E+6".hashCode(), num.hashCode());
     }
-
-    // test disabled until leading zeroes case is fixed in parser
-//    public void testHashCodeIntegerWithLeadingZeroes() {
-//        JsonReader reader = new JsonReader(new StringReader("[00001234]"));
-//        JsonNumber num = reader.readArray().getValue(0, JsonNumber.class);
-//        reader.close();
-//
-//        assertEquals("1234".hashCode(), num.hashCode());
-//    }
 
     public void testHashCodeDecimalWithTrailingZeroes() {
         JsonReader reader = new JsonReader(new StringReader("[12.34000]"));
