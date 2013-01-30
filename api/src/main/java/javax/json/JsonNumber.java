@@ -200,8 +200,10 @@ public interface JsonNumber extends JsonValue {
     /**
      * Compares the specified object with this JsonNumber for equality. Returns
      * {@code true} if and only if the specified object is also a JsonNumber,
-     * and they represent the same numeric quantity (regardless of exponential
-     * notation and trailing zeroes in the fractional part).
+     * and {@code this.getBigDecimalValue().compareTo(obj.getBigDecimalValue())}
+     * would return 0. This means they represent the same numeric quantity
+     * regardless of exponential notation and trailing zeroes in the fractional
+     * part.
      *
      * @param obj
      *            the object to be compared for equality with this JsonNumber
