@@ -87,7 +87,7 @@ class JsonStructureParser implements JsonParser {
     @Override
     public int getIntValue() {
         if (state == Event.VALUE_NUMBER) {
-            return ((JsonNumber)current.getJsonValue()).getIntValue();
+            return ((JsonNumber)current.getJsonValue()).intValue();
         }
         throw new IllegalStateException("JsonParser#getIntValue() can only be called in"
                 + " VALUE_NUMBER state, not in "+state);
@@ -96,7 +96,7 @@ class JsonStructureParser implements JsonParser {
     @Override
     public long getLongValue() {
         if (state == Event.VALUE_NUMBER) {
-            return ((JsonNumber)current.getJsonValue()).getLongValue();
+            return ((JsonNumber)current.getJsonValue()).longValue();
         }
         throw new IllegalStateException("JsonParser#getLongValue() can only be called in"
                 + " VALUE_NUMBER state, not in "+state);
@@ -105,7 +105,7 @@ class JsonStructureParser implements JsonParser {
     @Override
     public BigDecimal getBigDecimalValue() {
         if (state == Event.VALUE_NUMBER) {
-            return ((JsonNumber)current.getJsonValue()).getBigDecimalValue();
+            return ((JsonNumber)current.getJsonValue()).bigDecimalValue();
         }
         throw new IllegalStateException("JsonParser#getBigDecimalValue() can only be called in"
                 + " VALUE_NUMBER state, not in "+state);

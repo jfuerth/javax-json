@@ -223,7 +223,7 @@ public class JsonNumberTest extends TestCase {
     public void testBigIntegerExact() {
         try {
             JsonArray array = new JsonArrayBuilder().add(12345.12345).build();
-            array.getValue(0, JsonNumber.class).getBigIntegerValueExact();
+            array.get(0, JsonNumber.class).bigIntegerValueExact();
             fail("Expected Arithmetic exception");
         } catch (ArithmeticException expected) {
             // no-op

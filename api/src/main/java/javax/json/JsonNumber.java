@@ -117,7 +117,7 @@ public interface JsonNumber extends JsonValue {
      * @return an {@code int} for JSON number.
      * @see java.math.BigDecimal#intValue()
      */
-    int getIntValue();
+    int intValue();
 
     /**
      * Returns JSON number as an {@code int} number.
@@ -127,7 +127,7 @@ public interface JsonNumber extends JsonValue {
      *         part, or will not fit in an {@code int}
      * @see java.math.BigDecimal#intValueExact()
      */
-    int getIntValueExact();
+    int intValueExact();
 
     /**
      * Returns JSON number as a {@code long} number. Note that this conversion
@@ -137,7 +137,7 @@ public interface JsonNumber extends JsonValue {
      * @return a {@code long} for JSON number.
      * @see java.math.BigDecimal#longValue()
      */
-    long getLongValue();
+    long longValue();
 
     /**
      * Returns JSON number as a {@code long} number.
@@ -147,7 +147,7 @@ public interface JsonNumber extends JsonValue {
      *         part, or will not fit in a {@code long}.
      * @see java.math.BigDecimal#longValueExact()
      */
-    long  getLongValueExact();
+    long  longValueExact();
 
     /**
      * Returns JSON number as a {@link BigInteger} number. It is more of
@@ -159,7 +159,7 @@ public interface JsonNumber extends JsonValue {
      * @return a BigInteger for JSON number.
      * @see java.math.BigDecimal#toBigInteger()
      */
-    BigInteger getBigIntegerValue();
+    BigInteger bigIntegerValue();
 
     /**
      * Returns JSON number as a {@link BigDecimal} number. It is more of
@@ -169,7 +169,7 @@ public interface JsonNumber extends JsonValue {
      * @throws ArithmeticException if the number has a nonzero fractional part.
      * @see java.math.BigDecimal#toBigIntegerExact()
      */
-    BigInteger getBigIntegerValueExact();
+    BigInteger bigIntegerValueExact();
 
     /**
      * Returns JSON number as a {@code double} number. It is more of
@@ -181,14 +181,14 @@ public interface JsonNumber extends JsonValue {
      * @return a {@code double} for JSON number
      * @see java.math.BigDecimal#doubleValue()
      */
-    double getDoubleValue();
+    double doubleValue();
 
     /**
      * Returns JSON number as a {@link BigDecimal}
      *
      * @return a {@link BigDecimal} for JSON number
      */
-    BigDecimal getBigDecimalValue();
+    BigDecimal bigDecimalValue();
 
     /**
      * Returns a JSON representation of the JSON number value. The
@@ -202,7 +202,7 @@ public interface JsonNumber extends JsonValue {
     /**
      * Compares the specified object with this JsonNumber for equality.
      * Returns {@code true} if and only if the specified object is also a
-     * JsonNumber, and their {@link #getBigDecimalValue()} objects are
+     * JsonNumber, and their {@link #bigDecimalValue()} objects are
      * <i>equal</i>
      *
      * @param obj the object to be compared for equality with this JsonNumber
@@ -213,7 +213,7 @@ public interface JsonNumber extends JsonValue {
 
     /**
      * Returns the hash code value for this JsonNumber object.  The hash code of
-     * a JsonNumber object is defined to be its {@link #getBigDecimalValue()}
+     * a JsonNumber object is defined to be its {@link #bigDecimalValue()}
      * object's hash code.
      *
      * @return the hash code value for this JsonNumber object

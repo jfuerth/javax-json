@@ -65,7 +65,7 @@ public class JsonReaderTest extends TestCase {
         JsonReader reader = new JsonReader(new StringReader("[\"\\u0000\\u00ff\u00ff\"]"));
         JsonArray array = reader.readArray();
         reader.close();
-        String str = array.getValue(0, JsonString.class).getValue();
+        String str = array.get(0, JsonString.class).getValue();
         assertEquals("\u0000\u00ff\u00ff", str);
     }
 

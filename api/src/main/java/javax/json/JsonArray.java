@@ -120,7 +120,7 @@ public interface JsonArray extends JsonStructure, List<JsonValue> {
      * @throws ClassCastException if the value at the specified position is not
      * assignable to the type T
      */
-    <T extends JsonValue> T getValue(int index, Class<T> clazz);
+    <T extends JsonValue> T get(int index, Class<T> clazz);
 
     /**
      * A convenience method for
@@ -132,7 +132,7 @@ public interface JsonArray extends JsonStructure, List<JsonValue> {
      * @throws ClassCastException if the value at the specified position is not
      * assignable to JsonString
      */
-    String getStringValue(int index);
+    String getString(int index);
 
     /**
      * Returns the {@code String} value of {@code JsonString} at the specified
@@ -144,7 +144,7 @@ public interface JsonArray extends JsonStructure, List<JsonValue> {
      * @return the String value at the specified position in this array,
      * or the specified default value
      */
-    String getStringValue(int index, String defaultValue);
+    String getString(int index, String defaultValue);
 
     /**
      * A Convenience method for
@@ -156,19 +156,19 @@ public interface JsonArray extends JsonStructure, List<JsonValue> {
      * @throws ClassCastException if the value at the specified position is not
      * assignable to JsonNumber
      */
-    int getIntValue(int index);
+    int getInt(int index);
 
     /**
      * Returns the int value of {@code JsonNumber} at specified position in
      * this JSON array values. If {@code JsonNumber} is found,
-     * its {@link javax.json.JsonNumber#getIntValue()} is returned. Otherwise,
+     * its {@link javax.json.JsonNumber#intValue()} is returned. Otherwise,
      * the specified default value is returned.
      *
      * @param index index of the JsonNumber value
      * @return the int value at the specified position in this array,
      * or the specified default value
      */
-    int getIntValue(int index, int defaultValue);
+    int getInt(int index, int defaultValue);
 
     /**
      * Returns the boolean value for the specified position in this array.
@@ -182,7 +182,7 @@ public interface JsonArray extends JsonStructure, List<JsonValue> {
      * @throws ClassCastException if the value at the specified position is not
      * assignable to JsonValue.TRUE or JsonValue.FALSE
      */
-    boolean getBooleanValue(int index);
+    boolean getBoolean(int index);
 
     /**
      * Returns the boolean value for the specified position in this array.
@@ -194,6 +194,6 @@ public interface JsonArray extends JsonStructure, List<JsonValue> {
      * @return the boolean value at the specified position in this array,
      * or the specified default value
      */
-    boolean getBooleanValue(int index, boolean defaultValue);
+    boolean getBoolean(int index, boolean defaultValue);
 
 }

@@ -43,7 +43,10 @@ package javax.json;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Builds a {@link JsonArray} from scratch. It uses builder pattern
@@ -252,40 +255,40 @@ public class JsonArrayBuilder {
         }
 
         @Override
-        public <T extends JsonValue> T getValue(int index, Class<T> clazz) {
+        public <T extends JsonValue> T get(int index, Class<T> clazz) {
             return clazz.cast(valueList.get(index));
         }
 
         @Override
-        public String getStringValue(int index) {
-            return getValue(index, JsonString.class).getValue();
+        public String getString(int index) {
+            return get(index, JsonString.class).getValue();
         }
 
         @Override
-        public String getStringValue(int index, String defaultValue) {
+        public String getString(int index, String defaultValue) {
             try {
-                return getStringValue(index);
+                return getString(index);
             } catch (Exception e) {
                 return defaultValue;
             }
         }
 
         @Override
-        public int getIntValue(int index) {
-            return getValue(index, JsonNumber.class).getIntValue();
+        public int getInt(int index) {
+            return get(index, JsonNumber.class).intValue();
         }
 
         @Override
-        public int getIntValue(int index, int defaultValue) {
+        public int getInt(int index, int defaultValue) {
             try {
-                return getIntValue(index);
+                return getInt(index);
             } catch (Exception e) {
                 return defaultValue;
             }
         }
 
         @Override
-        public boolean getBooleanValue(int index) {
+        public boolean getBoolean(int index) {
             JsonValue jsonValue = get(index);
             if (jsonValue == JsonValue.TRUE) {
                 return true;
@@ -297,9 +300,9 @@ public class JsonArrayBuilder {
         }
 
         @Override
-        public boolean getBooleanValue(int index, boolean defaultValue) {
+        public boolean getBoolean(int index, boolean defaultValue) {
             try {
-                return getBooleanValue(index);
+                return getBoolean(index);
             } catch (Exception e) {
                 return defaultValue;
             }
@@ -400,42 +403,42 @@ final class JsonNumberImpl implements JsonNumber {
     }
 
     @Override
-    public int getIntValue() {
+    public int intValue() {
         return bigDecimal.intValue();
     }
 
     @Override
-    public int getIntValueExact() {
+    public int intValueExact() {
         return bigDecimal.intValueExact();
     }
 
     @Override
-    public long getLongValue() {
+    public long longValue() {
         return bigDecimal.longValue();
     }
 
     @Override
-    public long getLongValueExact() {
+    public long longValueExact() {
         return bigDecimal.longValueExact();
     }
 
     @Override
-    public BigInteger getBigIntegerValue() {
+    public BigInteger bigIntegerValue() {
         return bigDecimal.toBigInteger();
     }
 
     @Override
-    public BigInteger getBigIntegerValueExact() {
+    public BigInteger bigIntegerValueExact() {
         return bigDecimal.toBigIntegerExact();
     }
 
     @Override
-    public double getDoubleValue() {
+    public double doubleValue() {
         return bigDecimal.doubleValue();
     }
 
     @Override
-    public BigDecimal getBigDecimalValue() {
+    public BigDecimal bigDecimalValue() {
         return bigDecimal;
     }
 
@@ -446,7 +449,7 @@ final class JsonNumberImpl implements JsonNumber {
 
     @Override
     public int hashCode() {
-        return getBigDecimalValue().hashCode();
+        return bigDecimalValue().hashCode();
     }
 
     @Override
@@ -455,13 +458,12 @@ final class JsonNumberImpl implements JsonNumber {
             return false;
         }
         JsonNumber other = (JsonNumber)obj;
-        return getBigDecimalValue().equals(other.getBigDecimalValue());
+        return bigDecimalValue().equals(other.bigDecimalValue());
     }
 
     @Override
     public String toString() {
         return bigDecimal.toString();
     }
-
 }
 
