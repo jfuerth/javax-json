@@ -43,7 +43,11 @@ package javax.json;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Builds a {@link JsonObject} from scratch. It uses builder pattern to build
@@ -314,11 +318,11 @@ public class JsonObjectBuilder {
 
         @Override
         public String getString(String name, String defaultValue) {
-            try {
-                return getString(name);
-            } catch (Exception e) {
-                return defaultValue;
+            JsonValue value = get(name);
+            if (value instanceof JsonString) {
+                return ((JsonString) value).getValue();
             }
+            return defaultValue;
         }
 
         @Override
@@ -328,11 +332,11 @@ public class JsonObjectBuilder {
 
         @Override
         public int getInt(String name, int defaultValue) {
-            try {
-                return getInt(name);
-            } catch (Exception e) {
-                return defaultValue;
+            JsonValue value = get(name);
+            if (value instanceof JsonNumber) {
+                return ((JsonNumber) value).intValue();
             }
+            return defaultValue;
         }
 
         @Override
@@ -351,6 +355,8 @@ public class JsonObjectBuilder {
 
         @Override
         public boolean getBoolean(String name, boolean defaultValue) {
+            // XXX this is not ideal for correctness or for speed.
+            // preferred approach would be to create a JsonBoolean type and test using instanceof
             try {
                 return getBoolean(name);
             } catch (Exception e) {

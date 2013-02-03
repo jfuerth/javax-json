@@ -266,11 +266,11 @@ public class JsonArrayBuilder {
 
         @Override
         public String getString(int index, String defaultValue) {
-            try {
-                return getString(index);
-            } catch (Exception e) {
-                return defaultValue;
+            JsonValue value = get(index);
+            if (value instanceof JsonString) {
+                return ((JsonString) value).getValue();
             }
+            return defaultValue;
         }
 
         @Override
@@ -280,11 +280,11 @@ public class JsonArrayBuilder {
 
         @Override
         public int getInt(int index, int defaultValue) {
-            try {
-                return getInt(index);
-            } catch (Exception e) {
-                return defaultValue;
+            JsonValue value = get(index);
+            if (value instanceof JsonNumber) {
+                return ((JsonNumber) value).intValue();
             }
+            return defaultValue;
         }
 
         @Override
@@ -301,6 +301,8 @@ public class JsonArrayBuilder {
 
         @Override
         public boolean getBoolean(int index, boolean defaultValue) {
+            // XXX this is not ideal for correctness or for speed.
+            // preferred approach would be to create a JsonBoolean type and test using instanceof
             try {
                 return getBoolean(index);
             } catch (Exception e) {
