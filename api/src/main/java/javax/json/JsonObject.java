@@ -130,18 +130,40 @@ import java.util.Map;
 public interface JsonObject extends JsonStructure, Map<String, JsonValue> {
 
     /**
-     * Returns the value to which the specified name is mapped.
-     * This is just a convenience method for {@code (T) get(name)} to get
-     * the value.
+     * Returns the JsonObject to which the specified name is mapped.
+     * This is just a convenience method for {@code (JsonObject) get(name)}.
      *
      * @param name the name(key) whose associated value is to be returned
-     * @param clazz value class
      * @return the value to which the specified name is mapped, or
      *         {@code null} if this object contains no mapping for the name(key)
      * @throws ClassCastException if the value for specified name/key mapping
-     * is not assignable to the type T
+     * is not a JsonObject.
      */
-    <T extends JsonValue> T get(String name, Class<T> clazz);
+    JsonObject getObject(String name);
+
+    /**
+     * Returns the JsonNumber to which the specified name is mapped.
+     * This is just a convenience method for {@code (JsonNumber) get(name)}.
+     *
+     * @param name the name(key) whose associated value is to be returned
+     * @return the value to which the specified name is mapped, or
+     *         {@code null} if this object contains no mapping for the name(key)
+     * @throws ClassCastException if the value for specified name/key mapping
+     * is not a JsonNumber.
+     */
+    JsonNumber getNumber(String name);
+
+    /**
+     * Returns the JsonArray to which the specified name is mapped.
+     * This is just a convenience method for {@code (JsonArray) get(name)}.
+     *
+     * @param name the name(key) whose associated value is to be returned
+     * @return the value to which the specified name is mapped, or
+     *         {@code null} if this object contains no mapping for the name(key)
+     * @throws ClassCastException if the value for specified name/key mapping
+     * is not a JsonArray.
+     */
+    JsonArray getArray(String name);
 
     /**
      * A convenience method for

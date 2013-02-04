@@ -40,12 +40,19 @@
 
 package org.glassfish.json;
 
-import junit.framework.TestCase;
-
-import javax.json.*;
-import java.io.*;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonStructure;
+import javax.json.JsonValue;
+
+import junit.framework.TestCase;
 
 /**
  * @author Jitendra Kotamraju
@@ -65,7 +72,7 @@ public class JsonReaderTest extends TestCase {
         JsonReader reader = new JsonReader(new StringReader("[\"\\u0000\\u00ff\u00ff\"]"));
         JsonArray array = reader.readArray();
         reader.close();
-        String str = array.get(0, JsonString.class).getValue();
+        String str = array.getString(0);
         assertEquals("\u0000\u00ff\u00ff", str);
     }
 

@@ -40,14 +40,24 @@
 
 package org.glassfish.json;
 
-import junit.framework.TestCase;
-
-import javax.json.*;
-import javax.json.stream.JsonGenerationException;
-import javax.json.stream.JsonGenerator;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
+import javax.json.stream.JsonGenerationException;
+import javax.json.stream.JsonGenerator;
+
+import junit.framework.TestCase;
 
 /**
  * {@link JsonGenerator} tests
@@ -179,7 +189,7 @@ public class JsonGeneratorTest extends TestCase {
 
         JsonReader jr = new JsonReader(new StringReader(sw.toString()));
         JsonArray array = jr.readArray();
-        String got = array.get(0, JsonString.class).getValue();
+        String got = array.getString(0);
         jr.close();
 
         assertEquals(expected, got);

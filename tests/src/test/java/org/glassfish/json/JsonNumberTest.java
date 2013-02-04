@@ -40,13 +40,19 @@
 
 package org.glassfish.json;
 
-import junit.framework.TestCase;
-
-import javax.json.*;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonNumber;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
+import javax.json.JsonWriter;
+
+import junit.framework.TestCase;
 
 /**
  * @author Jitendra Kotamraju
@@ -223,7 +229,7 @@ public class JsonNumberTest extends TestCase {
     public void testBigIntegerExact() {
         try {
             JsonArray array = new JsonArrayBuilder().add(12345.12345).build();
-            array.get(0, JsonNumber.class).bigIntegerValueExact();
+            array.getNumber(0).bigIntegerValueExact();
             fail("Expected Arithmetic exception");
         } catch (ArithmeticException expected) {
             // no-op

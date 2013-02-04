@@ -40,9 +40,12 @@
 
 package org.glassfish.json;
 
-import junit.framework.TestCase;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 
-import javax.json.*;
+import junit.framework.TestCase;
 
 /**
  * @author Jitendra Kotamraju
@@ -74,30 +77,28 @@ public class JsonObjectTest extends TestCase {
 
     static void testPerson(JsonObject person) {
         assertEquals(5, person.size());
-        assertEquals("John", person.get("firstName", JsonString.class).getValue());
-        assertEquals("Smith", person.get("lastName", JsonString.class).getValue());
-        assertEquals(25, person.get("age", JsonNumber.class).intValue());
+        assertEquals("John", person.getString("firstName"));
+        assertEquals("Smith", person.getString("lastName"));
+        assertEquals(25, person.getNumber("age").intValue());
         assertEquals(25, person.getInt("age"));
 
-        JsonObject address = person.get("address", JsonObject.class);
+        JsonObject address = person.getObject("address");
         assertEquals(4, address.size());
-        assertEquals("21 2nd Street", address.get("streetAddress", JsonString.class).getValue());
-        assertEquals("New York", address.get("city", JsonString.class).getValue());
-        assertEquals("NY", address.get("state", JsonString.class).getValue());
-        assertEquals("10021", address.get("postalCode", JsonString.class).getValue());
+        assertEquals("21 2nd Street", address.getString("streetAddress"));
+        assertEquals("New York", address.getString("city"));
+        assertEquals("NY", address.getString("state"));
+        assertEquals("10021", address.getString("postalCode"));
 
-        JsonArray phoneNumber = person.get("phoneNumber", JsonArray.class);
+        JsonArray phoneNumber = person.getArray("phoneNumber");
         assertEquals(2, phoneNumber.size());
-        JsonObject home = phoneNumber.get(0, JsonObject.class);
+        JsonObject home = phoneNumber.getObject(0);
         assertEquals(2, home.size());
-        assertEquals("home", home.get("type", JsonString.class).getValue());
-        assertEquals("212 555-1234", home.get("number", JsonString.class).getValue());
+        assertEquals("home", home.getString("type"));
         assertEquals("212 555-1234", home.getString("number"));
 
-        JsonObject fax = phoneNumber.get(1, JsonObject.class);
+        JsonObject fax = phoneNumber.getObject(1);
         assertEquals(2, fax.size());
-        assertEquals("fax", fax.get("type", JsonString.class).getValue());
-        assertEquals("646 555-4567", fax.get("number", JsonString.class).getValue());
+        assertEquals("fax", fax.getString("type"));
         assertEquals("646 555-4567", fax.getString("number"));
     }
 
@@ -109,7 +110,7 @@ public class JsonObjectTest extends TestCase {
         JsonObject obj = new JsonObjectBuilder()
                 .add("foo", JsonValue.FALSE).build();
         try {
-            obj.get("foo", JsonNumber.class);
+            obj.getNumber("foo");
             fail("Expected ClassCastException for casting JsonValue.FALSE to JsonNumber");
         } catch (ClassCastException ce) {
             // Expected

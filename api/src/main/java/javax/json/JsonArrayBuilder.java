@@ -255,13 +255,23 @@ public class JsonArrayBuilder {
         }
 
         @Override
-        public <T extends JsonValue> T get(int index, Class<T> clazz) {
-            return clazz.cast(valueList.get(index));
+        public JsonObject getObject(int index) {
+            return (JsonObject) get(index);
+        }
+
+        @Override
+        public JsonNumber getNumber(int index) {
+            return (JsonNumber) get(index);
+        }
+
+        @Override
+        public JsonArray getArray(int index) {
+            return (JsonArray) get(index);
         }
 
         @Override
         public String getString(int index) {
-            return get(index, JsonString.class).getValue();
+            return ((JsonString) get(index)).getValue();
         }
 
         @Override
@@ -275,7 +285,7 @@ public class JsonArrayBuilder {
 
         @Override
         public int getInt(int index) {
-            return get(index, JsonNumber.class).intValue();
+            return ((JsonNumber) get(index)).intValue();
         }
 
         @Override

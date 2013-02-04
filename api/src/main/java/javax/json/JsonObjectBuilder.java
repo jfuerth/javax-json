@@ -307,13 +307,23 @@ public class JsonObjectBuilder {
         }
 
         @Override
-        public <T extends JsonValue> T get(String name, Class<T> clazz) {
-            return clazz.cast(valueMap.get(name));
+        public JsonObject getObject(String name) {
+            return ((JsonObject) get(name));
+        }
+
+        @Override
+        public JsonNumber getNumber(String name) {
+            return (JsonNumber) get(name);
+        }
+
+        @Override
+        public JsonArray getArray(String name) {
+            return (JsonArray) get(name);
         }
 
         @Override
         public String getString(String name) {
-            return get(name, JsonString.class).getValue();
+            return ((JsonString) get(name)).getValue();
         }
 
         @Override
@@ -327,7 +337,7 @@ public class JsonObjectBuilder {
 
         @Override
         public int getInt(String name) {
-            return get(name, JsonNumber.class).intValue();
+            return getNumber(name).intValue();
         }
 
         @Override

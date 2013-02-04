@@ -40,9 +40,13 @@
 
 package org.glassfish.json;
 
-import junit.framework.TestCase;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonNumber;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
-import javax.json.*;
+import junit.framework.TestCase;
 
 /**
  * @author Jitendra Kotamraju
@@ -73,7 +77,7 @@ public class JsonBuilderTest extends TestCase {
 
     public void testNumber() throws Exception {
         JsonObject person = buildPerson();
-        JsonNumber number = person.get("age", JsonNumber.class);
+        JsonNumber number = person.getNumber("age");
         assertEquals(25, number.intValueExact());
         assertEquals(25, number.intValue());
         assertEquals(JsonNumber.NumberType.INTEGER, number.getNumberType());

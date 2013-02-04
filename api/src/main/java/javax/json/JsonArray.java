@@ -109,18 +109,40 @@ import java.util.List;
 public interface JsonArray extends JsonStructure, List<JsonValue> {
 
     /**
-     * Returns the value at the specified position in this JSON array values.
-     * This is just a convenience method for {@code (T) get(index)} to get
-     * the value.
+     * Returns the JsonObject at the specified position in this JSON array.
+     * This is just a convenience method for {@code (JsonObject) get(index)}.
      *
      * @param index index of the value to return
-     * @param clazz value class
-     * @return the value at the specified position in this array values
+     * @return the JsonObject at the specified position in this array
      * @throws IndexOutOfBoundsException if the index is out of range
      * @throws ClassCastException if the value at the specified position is not
-     * assignable to the type T
+     * a JsonObject
      */
-    <T extends JsonValue> T get(int index, Class<T> clazz);
+    JsonObject getObject(int index);
+
+    /**
+     * Returns the JsonNumber at the specified position in this JSON array.
+     * This is just a convenience method for {@code (JsonNumber) get(index)}.
+     *
+     * @param index index of the value to return
+     * @return the JsonNumber at the specified position in this array
+     * @throws IndexOutOfBoundsException if the index is out of range
+     * @throws ClassCastException if the value at the specified position is not
+     * a JsonNumber
+     */
+    JsonNumber getNumber(int index);
+
+    /**
+     * Returns the JsonArray at the specified position in this JSON array.
+     * This is just a convenience method for {@code (JsonArray) get(index)}.
+     *
+     * @param index index of the value to return
+     * @return the JsonArray at the specified position in this array
+     * @throws IndexOutOfBoundsException if the index is out of range
+     * @throws ClassCastException if the value at the specified position is not
+     * a JsonArray
+     */
+    JsonArray getArray(int index);
 
     /**
      * A convenience method for
