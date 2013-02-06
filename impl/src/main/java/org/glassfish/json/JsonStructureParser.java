@@ -85,7 +85,7 @@ class JsonStructureParser implements JsonParser {
     }
 
     @Override
-    public int getIntValue() {
+    public int getInt() {
         if (state == Event.VALUE_NUMBER) {
             return ((JsonNumber)current.getJsonValue()).intValue();
         }
@@ -94,7 +94,7 @@ class JsonStructureParser implements JsonParser {
     }
 
     @Override
-    public long getLongValue() {
+    public long getLong() {
         if (state == Event.VALUE_NUMBER) {
             return ((JsonNumber)current.getJsonValue()).longValue();
         }
@@ -103,7 +103,7 @@ class JsonStructureParser implements JsonParser {
     }
 
     @Override
-    public BigDecimal getBigDecimalValue() {
+    public BigDecimal getBigDecimal() {
         if (state == Event.VALUE_NUMBER) {
             return ((JsonNumber)current.getJsonValue()).bigDecimalValue();
         }

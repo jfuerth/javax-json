@@ -278,7 +278,7 @@ public interface JsonParser extends /*Auto*/Closeable {
      *      VALUE_NUMBER
      * @see java.math.BigDecimal#intValue()
      */
-    int getIntValue();
+    int getInt();
 
     /**
      * Returns JSON number as a long. The returned value is equal
@@ -293,7 +293,7 @@ public interface JsonParser extends /*Auto*/Closeable {
      *      VALUE_NUMBER
      * @see java.math.BigDecimal#longValue()
      */
-    long getLongValue();
+    long getLong();
 
     /**
      * Returns JSON number as a {@code BigDecimal}. The BigDecimal
@@ -305,7 +305,7 @@ public interface JsonParser extends /*Auto*/Closeable {
      * @throws IllegalStateException when the parser state is not
      *      VALUE_NUMBER
      */
-    BigDecimal getBigDecimalValue();
+    BigDecimal getBigDecimal();
 
     /**
      * getJsonValue(JsonObject.class) is valid in START_OBJECT state,
